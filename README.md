@@ -1,7 +1,5 @@
 # Globo Checkout BFF
 
-Repositório: https://github.com/juliodepieri/globo-checkout-bff
-
 ## 1. Descrição
 
 Backend for Frontend (BFF) de um checkout de assinatura. Expõe duas operações para o frontend:
