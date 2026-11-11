@@ -1,0 +1,24 @@
+# Gradle
+.gradle/
+build/
+
+# IntelliJ
+.idea/
+*.iml
+out/
+
+# Eclipse / VS Code (Java extension)
+.vscode/
+bin/
+.classpath
+.project
+.settings/
+
+# Local environment and logs
+*.env
+*.log
+logs/
+
+# OS and generated files
+.DS_Store
+HELP.md

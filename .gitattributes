@@ -1,0 +1,5 @@
+# Scripts run on Linux/Docker must keep LF even when cloned on Windows.
+gradlew    text eol=lf
+*.sh       text eol=lf
+*.bat      text eol=crlf
+*.jar      binary

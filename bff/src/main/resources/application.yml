@@ -1,0 +1,80 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: globo-checkout-bff
+  messages:
+    basename: messages
+    fallback-to-system-locale: false   # unsupported language -> messages.properties (pt-BR), not the server locale
+  web:
+    locale: pt_BR                      # used when the request has no Accept-Language
+    locale-resolver: accept-header
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/checkout}
+    username: ${DB_USER:checkout}
+    password: ${DB_PASSWORD:checkout}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    listener:
+      simple:
+        default-requeue-rejected: false   # after retries, send to the DLQ instead of looping
+        retry:
+          enabled: true
+          max-attempts: 3
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 500ms
+  cache:
+    type: ${CACHE_TYPE:redis}
+    redis:
+      time-to-live: ${CACHE_TTL:10m}
+      cache-null-values: false
+      key-prefix: "globo-checkout-bff::"
+
+checkout:
+  clients:
+    catalog:
+      base-url: ${CATALOG_BASE_URL:http://localhost:8081}
+    payment-methods:
+      base-url: ${PAYMENT_METHODS_BASE_URL:http://localhost:8081}
+    connect-timeout: 2s
+    read-timeout: 3s
+  messaging:
+    exchange: checkout.events
+    payment-events-queue: checkout.payment-events
+    dead-letter-queue: checkout.payment-events.dlq
+  outbox:
+    relay-enabled: true
+    relay-interval: 1s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  api-docs:
+    enabled: ${API_DOCS_ENABLED:true}       # set false where the contract must not be public
+  swagger-ui:
+    enabled: ${API_DOCS_ENABLED:true}
+    path: /swagger-ui.html
+    try-it-out-enabled: true
+    display-request-duration: true
+  default-produces-media-type: application/json
